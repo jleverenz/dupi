@@ -1,0 +1,14 @@
+*.egg-info/
+*.json
+*.pyc
+.coverage
+.tox/
+
+# sphinx output
+_build/
+
+# common virtualenv directory
+venv/
+
+# pyenv
+.python-version
