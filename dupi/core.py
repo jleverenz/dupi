@@ -15,7 +15,6 @@ def update_index(index, directories=[]):
 
     if(len(directories) == 0):
         for i in list(index.all()):
-            indexed_mtime = i['mtime']
             stats = os.stat(i['fullpath'])
             if(stats.st_mtime != i['mtime']):
                 index.update({'fullpath': i['fullpath'],
