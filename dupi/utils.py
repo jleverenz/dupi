@@ -11,8 +11,9 @@ def generate_filelist(directories):
     rv = []
 
     # Reminder: os.walk does not guarantee order of files in any single
-    # directory. However, high level file list ordering is stable based on
-    # input 'directories' order.
+    # directory. This method calls sort_filelist_peers to ensure
+    # ordering. Additionally, it will maintain stable order based on input
+    # 'directories' order.
 
     # Reminder: by default, os.walk skip symlinks to directories
 
@@ -31,10 +32,20 @@ def generate_filelist(directories):
             dirlist[:] = [d for d in dirlist
                           if os.path.abspath(d) not in visited_directories]
 
-            for fname in [f for f in filelist
+            for fname in [f for f in sort_filelist_peers(filelist)
                           if not os.path.islink(os.path.join(dirpath, f))]:
                 rv.append(os.path.join(dirpath, fname))
     return rv
+
+
+def sort_filelist_peers(filelist):
+    """Sort a list of filenames to ensure ordering.
+
+    This is used to guarantee predictable results from the arbitrary ordering
+    of os.walk and os.listdir.
+    """
+
+    return sorted(filelist)
 
 
 def hash_file(filepath):
