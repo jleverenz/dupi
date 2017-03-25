@@ -3,6 +3,8 @@
 *.pyc
 .coverage
 .tox/
+build/
+dist/
 
 # sphinx output
 _build/

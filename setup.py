@@ -6,7 +6,7 @@ exec(open('dupi/version.py').read())
 setup(name='dupi',
       version=version_string(),
       description='File hash indexer for duplicate file finding.',
-      #url='https://github.com/jleverenz/dupi',
+      url='https://github.com/jleverenz/dupi',
       author='Jeff Leverenz',
       author_email='jeff.leverenz@gmail.com',
       license='MIT',
