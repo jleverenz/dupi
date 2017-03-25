@@ -44,6 +44,15 @@ class Storage:
     def insert(self, stats):
         self.update(stats)
 
+    def get_duplicate_hash_dict(self):
+        """Returns the hash dict for any entries with >1 file values.
+
+        Returned hash represents a collection where each value of the dict is a
+        list where the first element is an original file, and the remaining
+        elements are duplicate files."""
+
+        return {k: v for k, v in self.hash_dict.items() if len(v) > 1}
+
     def all(self):
         return self.path_dict.values()
 

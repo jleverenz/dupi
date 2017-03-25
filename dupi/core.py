@@ -42,19 +42,13 @@ def update_index(index, directories=[]):
 
 def list_duplicates(index):
     """Generate the duplicate files found in the index."""
-    hashes = set()
-    for i in index.all():
-        h = i['sha256']
-        if h in hashes:
-            yield i['fullpath']
-        else:
-            hashes.add(h)
+
+    for orig_dup_list in index.get_duplicate_hash_dict().values():
+        for dup in orig_dup_list[1:]:
+            yield dup
 
 
 def list_duplicates_with_originals(index):
-    # NOTE that the order of the return is not guaranteed due to unordered dict
-    d = defaultdict(list)  # hash, [orig, dup, dup, ...]
-    for i in index.all():
-        d[i['sha256']].append(i['fullpath'])
+    """Returns list of lists. Inner list contains [orig, dup, dup, ...]"""
 
-    return [i for i in d.values() if len(i) > 1]
+    return list(index.get_duplicate_hash_dict().values())
