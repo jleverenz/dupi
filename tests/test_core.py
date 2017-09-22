@@ -1,6 +1,9 @@
-from pyfakefs import fake_filesystem_unittest
+from pyfakefs import fake_filesystem, fake_filesystem_unittest
+
 from dupi import conf, core
 from dupi.storage import Storage
+
+from unittest.mock import patch
 
 
 class TestCore(fake_filesystem_unittest.TestCase):
@@ -71,6 +74,40 @@ class TestCore(fake_filesystem_unittest.TestCase):
 
         self.assertEqual(1, len(self.index.all()))
         self.assertNotEqual(sha, self.index.get('/test/file1')['sha256'])
+
+    def _delete_file_before_stat(self, f):
+        # This function is used in tests below to simulate a file being deleted
+        # while dupi is processing. Since dupi will build file lists first, and
+        # then process them, there's a window where a file my be removed and is
+        # no longer processable. This simulates that behavior by destroying
+        # files immediately before os.stat is called.
+
+        fake_os = fake_filesystem.FakeOsModule(self.fs)
+        # delete the file right before calling
+        self.fs.RemoveObject(f)
+        return fake_os.stat(f)
+
+    def test_update_with_dirs_handles_disappearing_files(self):
+        self.fs.CreateFile('/test/blahfile', contents='abc')
+
+        with patch('dupi.core.os.stat',
+                   side_effect=self._delete_file_before_stat):
+            core.update_index(self.index, ['/test'])
+
+        # Nothing added .. the file disappeared
+        self.assertEqual(len(self.index.all()), 0)
+
+    def test_update_empty_handles_disappearing_files(self):
+        self.fs.CreateFile('/test/blahfile', contents='abc')
+
+        core.update_index(self.index, ['/test'])
+        self.assertEqual(len(self.index.all()), 1)
+
+        with patch('dupi.core.os.stat',
+                   side_effect=self._delete_file_before_stat):
+            core.update_index(self.index, [])
+
+        self.assertEqual(len(self.index.all()), 0)
 
     def test_update_index_deletes_removed_files(self):
         self.fs.CreateFile('/test/file1', contents='abc')

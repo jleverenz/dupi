@@ -15,7 +15,13 @@ def update_index(index, directories=[]):
 
     if(len(directories) == 0):
         for i in list(index.all()):
-            stats = os.stat(i['fullpath'])
+            try:
+                stats = os.stat(i['fullpath'])
+            except FileNotFoundError:
+                # disappeared, purge it
+                index.remove(i['fullpath'])
+                continue
+
             if(stats.st_mtime != i['mtime']):
                 index.update({'fullpath': i['fullpath'],
                               'size': stats.st_size,
@@ -24,7 +30,12 @@ def update_index(index, directories=[]):
 
     for f in generate_filelist(directories):
         fullpath = os.path.abspath(f)
-        stats = os.stat(f)
+
+        try:
+            stats = os.stat(f)
+        except FileNotFoundError:
+            continue
+
         existing = index.get(fullpath)
 
         if existing is not None:
