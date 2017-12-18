@@ -41,9 +41,6 @@ class Storage:
         if fullpath not in files:
             files.append(fullpath)
 
-    def insert(self, stats):
-        self.update(stats)
-
     def get_duplicate_hash_dict(self):
         """Returns the hash dict for any entries with >1 file values.
 

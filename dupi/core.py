@@ -45,7 +45,7 @@ def update_index(index, directories=[]):
                               'mtime': stats.st_mtime,
                               'sha256': hash_file(fullpath)})
         else:
-            index.insert({'fullpath': fullpath,
+            index.update({'fullpath': fullpath,
                           'size': stats.st_size,
                           'mtime': stats.st_mtime,
                           'sha256': hash_file(fullpath)})
