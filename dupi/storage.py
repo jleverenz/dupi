@@ -7,8 +7,9 @@ class Storage:
     """Data model for filepath information.
 
     'Storage' stores two dictionaries:
-        1. path keys to stats values
-        2. hash keys to list values of duplicate files with common hash
+        1. path keys to stats values (self.path_dict)
+        2. hash keys to list values of duplicate files
+           with common hash (self.hash_dict)
     """
 
     def __init__(self, filename):
@@ -25,6 +26,7 @@ class Storage:
                     self.hash_dict = defaultdict(list, data['hashes'])
 
     def get(self, path):
+        """Return stats for the given path. Return `None` is not in index."""
         if path in self.path_dict:
             return self.path_dict[path]
         else:

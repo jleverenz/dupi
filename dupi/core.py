@@ -1,3 +1,5 @@
+"""High level functions for working with a dupi index."""
+
 from collections import defaultdict
 import os
 
@@ -5,12 +7,19 @@ from dupi.utils import hash_file, generate_filelist
 
 
 def purge_removed_files(index):
+    """Remove index records for files that no longer exist."""
     for i in list(index.all()):
         if not os.path.exists(i['fullpath']):
             index.remove(i['fullpath'])
 
 
 def update_index(index, directories=[]):
+    """Update the index with new file stats.
+
+    If supplied, search recursively in `directories` for files and add stats to
+    the index. If `directories` is not supplied check for file mods in existing
+    indexed files and update stats if needed."""
+
     purge_removed_files(index)
 
     if(len(directories) == 0):
