@@ -2,6 +2,7 @@
 
 from collections import defaultdict
 import os
+from tqdm import tqdm
 
 from dupi.utils import hash_file, generate_filelist
 
@@ -11,6 +12,17 @@ def purge_removed_files(index):
     for i in list(index.all()):
         if not os.path.exists(i['fullpath']):
             index.remove(i['fullpath'])
+
+
+# Test for zero length before calling tqdm, otherwise it'll leave a "0it"
+# console clutter around. tqdm's `leave` param doesn't help, since showing
+# final progress bar of non-zero lists is desirable.
+def _cleaner_tqdm(iterable):
+    if iterable:
+        for i in tqdm(iterable):
+            yield i
+    else:
+        return []
 
 
 def update_index(index, directories=[]):
@@ -23,7 +35,7 @@ def update_index(index, directories=[]):
     purge_removed_files(index)
 
     if(len(directories) == 0):
-        for i in list(index.all()):
+        for i in _cleaner_tqdm(list(index.all())):
             try:
                 stats = os.stat(i['fullpath'])
             except FileNotFoundError:
@@ -37,7 +49,7 @@ def update_index(index, directories=[]):
                               'mtime': stats.st_mtime,
                               'sha256': hash_file(i['fullpath'])})
 
-    for f in generate_filelist(directories):
+    for f in _cleaner_tqdm(generate_filelist(directories)):
         fullpath = os.path.abspath(f)
 
         try:

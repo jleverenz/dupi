@@ -1,3 +1,6 @@
+from tests.common import *      # dupi/tests/common
+
+import io
 import random
 
 from pyfakefs import fake_filesystem_unittest
@@ -28,6 +31,12 @@ class ShufflingDict(dict):
 # @patch requires create=True for py versions < 3.5. It is optional in 3.5+.
 @patch('dupi.storage.dict', wraps=ShufflingDict, create=True)
 class TestDictionaryOrder(fake_filesystem_unittest.TestCase):
+
+    # Override run() to wrap each test in a context redirecting stderr
+    def run(self, result=None):
+        err_out = io.StringIO()
+        with redirect_stderr(err_out):
+            super().run(result)
 
     @patch('dupi.storage.dict', wraps=ShufflingDict, create=True)
     def setUp(self, dict_mock):

@@ -1,3 +1,7 @@
+from tests.common import *      # dupi/tests/common
+
+import io
+
 from pyfakefs import fake_filesystem, fake_filesystem_unittest
 
 from dupi import conf, core
@@ -7,6 +11,12 @@ from unittest.mock import patch
 
 
 class TestCore(fake_filesystem_unittest.TestCase):
+
+    # Override run() to wrap each test in a context redirecting stderr
+    def run(self, result=None):
+        err_out = io.StringIO()
+        with redirect_stderr(err_out):
+            super().run(result)
 
     def setUp(self):
         self.setUpPyfakefs()

@@ -13,4 +13,5 @@ setup(name='dupi',
       packages=['dupi'],
       entry_points = {
           'console_scripts': ['dupi=dupi.__main__:main'] },
+      test_suite='tests',
       zip_safe=False)

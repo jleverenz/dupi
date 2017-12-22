@@ -1,3 +1,5 @@
+from tests.common import *      # dupi/tests/common
+
 import io
 import re
 import sys
@@ -10,6 +12,12 @@ from dupi.storage import Storage
 
 
 class TestCommands(fake_filesystem_unittest.TestCase):
+
+    # Override run() to wrap each test in a context redirecting stderr
+    def run(self, result=None):
+        err_out = io.StringIO()
+        with redirect_stderr(err_out):
+            super().run(result)
 
     def setUp(self):
         self.setUpPyfakefs()

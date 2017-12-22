@@ -1,3 +1,5 @@
+from tests.common import *      # dupi/tests/common
+
 import io
 import sys
 
@@ -9,6 +11,12 @@ from dupi.storage import Storage
 
 # TODO order is not deterministic while based on os.walk
 class TestReporting(fake_filesystem_unittest.TestCase):
+
+    # Override run() to wrap each test in a context redirecting stderr
+    def run(self, result=None):
+        err_out = io.StringIO()
+        with redirect_stderr(err_out):
+            super().run(result)
 
     def setUp(self):
         self.setUpPyfakefs()
