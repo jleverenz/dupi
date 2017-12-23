@@ -6,7 +6,7 @@ import random
 from pyfakefs import fake_filesystem_unittest
 
 from dupi import conf, core
-from dupi.storage import Storage
+from dupi.index import Index
 
 from unittest.mock import patch
 
@@ -29,7 +29,7 @@ class ShufflingDict(dict):
 
 
 # @patch requires create=True for py versions < 3.5. It is optional in 3.5+.
-@patch('dupi.storage.dict', wraps=ShufflingDict, create=True)
+@patch('dupi.index.dict', wraps=ShufflingDict, create=True)
 class TestDictionaryOrder(fake_filesystem_unittest.TestCase):
 
     # Override run() to wrap each test in a context redirecting stderr
@@ -46,7 +46,7 @@ class TestDictionaryOrder(fake_filesystem_unittest.TestCase):
         self.fs.CreateFile(conf.index_file, create_missing_dirs=True)
 
         # Setup index
-        self.index = Storage(conf.index_file)
+        self.index = Index(conf.index_file)
 
     def test_list(self, dict_mock):
         self.fs.CreateFile('/test/file1', contents='abc')

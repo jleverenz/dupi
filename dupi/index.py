@@ -3,10 +3,10 @@ import os
 from collections import defaultdict
 
 
-class Storage:
+class Index:
     """Data model for filepath information.
 
-    'Storage' stores two dictionaries:
+    Has two dictionaries:
         1. path keys to stats values (self.path_dict)
         2. hash keys to list values of duplicate files
            with common hash (self.hash_dict)

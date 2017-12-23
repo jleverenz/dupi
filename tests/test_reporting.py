@@ -6,7 +6,7 @@ import sys
 from pyfakefs import fake_filesystem_unittest
 
 from dupi import conf, core
-from dupi.storage import Storage
+from dupi.index import Index
 
 
 # TODO order is not deterministic while based on os.walk
@@ -26,7 +26,7 @@ class TestReporting(fake_filesystem_unittest.TestCase):
         self.fs.CreateFile(conf.index_file, create_missing_dirs=True)
 
         # Setup index
-        self.index = Storage(conf.index_file)
+        self.index = Index(conf.index_file)
 
     def test_list_empty(self):
         core.update_index(self.index, ['/test'])

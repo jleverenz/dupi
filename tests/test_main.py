@@ -7,7 +7,7 @@ from pyfakefs import fake_filesystem_unittest
 
 from dupi import conf
 from dupi.__main__ import main
-from dupi.storage import Storage
+from dupi.index import Index
 import dupi.commands
 
 
@@ -32,7 +32,7 @@ class TestMain(fake_filesystem_unittest.TestCase):
 
         main(['update', '/test'])
 
-        index = Storage(conf.index_file)
+        index = Index(conf.index_file)
         self.assertEqual(len(index.all()), 2)
 
     def test_update_empty(self):
@@ -40,14 +40,14 @@ class TestMain(fake_filesystem_unittest.TestCase):
         self.fs.CreateFile('/test/file2', contents='abc')
 
         main(['update', '/test'])
-        index = Storage(conf.index_file)
+        index = Index(conf.index_file)
         sha = index.get('/test/file1')['sha256']
         with open('/test/file1', "w") as f:
             f.write('ghi')
         self.fs.RemoveObject('/test/file2')
         main(['update'])
 
-        index = Storage(conf.index_file)
+        index = Index(conf.index_file)
         self.assertEqual(1, len(index.all()))
         self.assertNotEqual(sha, index.get('/test/file1')['sha256'])
 
@@ -56,11 +56,11 @@ class TestMain(fake_filesystem_unittest.TestCase):
         self.fs.CreateFile('/test/file2', contents='abc')
         main(['update', '/test'])
 
-        index = Storage(conf.index_file)
+        index = Index(conf.index_file)
         self.assertEqual(len(index.all()), 2)
 
         main(['purge'])
-        index = Storage(conf.index_file)
+        index = Index(conf.index_file)
         self.assertEqual(0, len(index.all()))
 
     def test_update_and_list(self):

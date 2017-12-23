@@ -1,7 +1,7 @@
 import argparse
 from dupi.commands import dispatch
 from dupi import conf
-from dupi.storage import Storage
+from dupi.index import Index
 
 
 def _parse_args(args=None):
@@ -37,7 +37,7 @@ def main(args=None):
     command = dict_args['command']
     del dict_args['command']
 
-    s = Storage(conf.index_file)
+    s = Index(conf.index_file)
     dispatch(s, command, **dict_args)
     s.save()
 

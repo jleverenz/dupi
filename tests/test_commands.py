@@ -8,7 +8,7 @@ from pyfakefs import fake_filesystem_unittest
 
 from dupi import conf, core
 from dupi.commands import dispatch
-from dupi.storage import Storage
+from dupi.index import Index
 
 
 class TestCommands(fake_filesystem_unittest.TestCase):
@@ -30,7 +30,7 @@ class TestCommands(fake_filesystem_unittest.TestCase):
         self.fs.CreateFile('/test/file1', contents='abc')
         self.fs.CreateFile('/test/file2', contents='abc')
 
-        index = Storage(conf.index_file)
+        index = Index(conf.index_file)
 
         params = {'dirs': ['/test']}
         dispatch(index, 'update', **params)
@@ -51,7 +51,7 @@ class TestCommands(fake_filesystem_unittest.TestCase):
         stdout_cap = io.StringIO()
         sys.stdout = stdout_cap
 
-        index = Storage(conf.index_file)
+        index = Index(conf.index_file)
         core.update_index(index, ['/test'])
         dispatch(index, 'report')
 
@@ -71,7 +71,7 @@ class TestCommands(fake_filesystem_unittest.TestCase):
         stdout_cap = io.StringIO()
         sys.stdout = stdout_cap
 
-        index = Storage(conf.index_file)
+        index = Index(conf.index_file)
         core.update_index(index, ['/test'])
         dispatch(index, 'stats')
 

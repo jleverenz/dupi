@@ -5,7 +5,7 @@ import io
 from pyfakefs import fake_filesystem, fake_filesystem_unittest
 
 from dupi import conf, core
-from dupi.storage import Storage
+from dupi.index import Index
 
 from unittest.mock import patch
 
@@ -26,7 +26,7 @@ class TestCore(fake_filesystem_unittest.TestCase):
         self.fs.CreateFile(conf.index_file, create_missing_dirs=True)
 
         # Setup index
-        self.index = Storage(conf.index_file)
+        self.index = Index(conf.index_file)
 
     def test_update_index_with_single_file(self):
         self.fs.CreateFile('/test/file1', contents='abc')
