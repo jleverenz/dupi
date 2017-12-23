@@ -38,8 +38,7 @@ class TestDictionaryOrder(fake_filesystem_unittest.TestCase):
         with redirect_stderr(err_out):
             super().run(result)
 
-    @patch('dupi.storage.dict', wraps=ShufflingDict, create=True)
-    def setUp(self, dict_mock):
+    def setUp(self):
         self.setUpPyfakefs()
 
         # Touch the default index file location on fake filesystem,
