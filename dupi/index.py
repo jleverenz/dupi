@@ -2,6 +2,8 @@ import json
 import os
 from collections import defaultdict
 
+from dupi.utils import hash_file
+
 
 class Index:
     """Data model for filepath information.
@@ -31,6 +33,23 @@ class Index:
             return self.path_dict[path]
         else:
             return None
+
+    def _update(self, filename, stats=None):
+        fullpath = os.path.abspath(filename)
+
+        if not stats:
+            try:
+                stats = os.stat(fullpath)
+            except FileNotFoundError:
+                self.remove(fullpath)
+                return
+
+        current_record = self.get(fullpath)
+        if(not current_record or stats.st_mtime != current_record['mtime']):
+            self.update({'fullpath': fullpath,
+                         'size': stats.st_size,
+                         'mtime': stats.st_mtime,
+                         'sha256': hash_file(fullpath)})
 
     def update(self, stats):
         fullpath = stats['fullpath']

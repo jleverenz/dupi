@@ -36,40 +36,10 @@ def update_index(index, directories=[]):
 
     if(len(directories) == 0):
         for i in _cleaner_tqdm(list(index.all())):
-            try:
-                stats = os.stat(i['fullpath'])
-            except FileNotFoundError:
-                # disappeared, purge it
-                index.remove(i['fullpath'])
-                continue
-
-            if(stats.st_mtime != i['mtime']):
-                index.update({'fullpath': i['fullpath'],
-                              'size': stats.st_size,
-                              'mtime': stats.st_mtime,
-                              'sha256': hash_file(i['fullpath'])})
+            index._update(i['fullpath'])
 
     for f in _cleaner_tqdm(generate_filelist(directories)):
-        fullpath = os.path.abspath(f)
-
-        try:
-            stats = os.stat(f)
-        except FileNotFoundError:
-            continue
-
-        existing = index.get(fullpath)
-
-        if existing is not None:
-            if(stats.st_mtime != existing['mtime']):
-                index.update({'fullpath': fullpath,
-                              'size': stats.st_size,
-                              'mtime': stats.st_mtime,
-                              'sha256': hash_file(fullpath)})
-        else:
-            index.update({'fullpath': fullpath,
-                          'size': stats.st_size,
-                          'mtime': stats.st_mtime,
-                          'sha256': hash_file(fullpath)})
+        index._update(f)
 
 
 def list_duplicates(index):

@@ -100,7 +100,7 @@ class TestCore(fake_filesystem_unittest.TestCase):
     def test_update_with_dirs_handles_disappearing_files(self):
         self.fs.CreateFile('/test/blahfile', contents='abc')
 
-        with patch('dupi.core.os.stat',
+        with patch('dupi.index.os.path',
                    side_effect=self._delete_file_before_stat):
             core.update_index(self.index, ['/test'])
 
@@ -113,7 +113,7 @@ class TestCore(fake_filesystem_unittest.TestCase):
         core.update_index(self.index, ['/test'])
         self.assertEqual(len(self.index.all()), 1)
 
-        with patch('dupi.core.os.stat',
+        with patch('dupi.index.os.stat',
                    side_effect=self._delete_file_before_stat):
             core.update_index(self.index, [])
 
